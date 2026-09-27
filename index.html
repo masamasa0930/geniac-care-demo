@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今週の一手 デイサービス版</title>
+<style>
+:root{
+  --cyan:#00BCD4; --cyan-d:#0097A7; --cyan-l:#E0F7FA;
+  --orange:#F29600; --orange-l:#FFF3E0;
+  --dark:#333; --mid:#666; --light:#F0F0F0; --border:#DDD; --white:#fff;
+  --red:#CC0000; --red-l:#FDECEC; --green:#1E8A4C; --green-l:#E7F5EC;
+  --base:#1E3A6E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#F7F8FA;color:var(--dark);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;font-size:14px;line-height:1.7}
+button{font-family:inherit;cursor:pointer}
+.demo-bar{background:var(--orange);color:#fff;text-align:center;font-size:12px;padding:4px 16px}
+header{background:var(--white);border-bottom:3px solid var(--cyan);padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header .brand{font-weight:700;font-size:18px}
+header .brand small{display:block;font-weight:400;font-size:11px;color:var(--mid)}
+.mode{margin-left:auto;display:flex;border:1px solid var(--cyan);border-radius:20px;overflow:hidden}
+.mode button{border:0;background:#fff;color:var(--cyan-d);padding:6px 16px;font-size:13px}
+.mode button.on{background:var(--cyan);color:#fff;font-weight:700}
+.layout{display:flex;min-height:calc(100vh - 90px)}
+nav{width:220px;background:var(--white);border-right:1px solid var(--border);padding:16px 0;flex-shrink:0}
+nav .grp{font-size:11px;color:var(--mid);padding:12px 20px 4px}
+nav button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 20px;font-size:14px;color:var(--dark);border-left:4px solid transparent}
+nav button.on{background:var(--cyan-l);border-left-color:var(--cyan);font-weight:700}
+nav button[hidden]{display:none}
+main{flex:1;padding:24px 32px;max-width:1100px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--mid);margin:0 0 20px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:16px}
+.card.accent{border-top:4px solid var(--orange)}
+.row{display:flex;gap:16px;flex-wrap:wrap}
+.row>.card{flex:1;min-width:260px}
+.pill{display:inline-block;font-size:11px;padding:1px 10px;border-radius:10px;background:var(--light);color:var(--mid);margin-right:4px}
+.pill.red{background:var(--red-l);color:var(--red)}
+.pill.orange{background:var(--orange-l);color:#B36B00}
+.pill.cyan{background:var(--cyan-l);color:var(--cyan-d)}
+.pill.green{background:var(--green-l);color:var(--green)}
+.target{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:start;cursor:pointer}
+.rank{width:44px;height:44px;border-radius:50%;background:var(--orange);color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center}
+.rank.r2{background:#F5B042}.rank.r3{background:#F7C97A}
+.target h3{margin:0;font-size:17px}
+.target .why{color:var(--mid);font-size:13px;margin-top:2px}
+.risk{text-align:right;font-size:12px;color:var(--mid)}
+.risk b{display:block;font-size:22px;color:var(--red)}
+.detail{margin-top:16px;border-top:1px dashed var(--border);padding-top:16px;display:none}
+.card.open .detail{display:block}
+.src{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.src>div{background:var(--light);border-radius:6px;padding:10px 12px;font-size:13px}
+.src h4{margin:0 0 6px;font-size:12px;color:var(--cyan-d)}
+mark{background:#FFE7B8;padding:0 2px}
+.quote{font-size:12.5px;border-left:3px solid var(--border);padding-left:8px;margin:4px 0;color:#444}
+.script{background:var(--cyan-l);border-radius:6px;padding:12px 16px}
+.script h4{margin:0 0 6px;font-size:14px}
+.script ol{margin:4px 0 8px;padding-left:20px}
+.script .ng{color:var(--red);font-size:13px}
+.bars{display:grid;grid-template-columns:70px 1fr 28px;gap:4px 8px;align-items:center;font-size:12px}
+.bar{height:8px;background:#E6E6E6;border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--cyan)}
+.bar i.hi{background:var(--orange)}
+.btn{border:0;background:var(--orange);color:#fff;padding:8px 18px;border-radius:6px;font-size:14px;font-weight:700}
+.btn.sub{background:#fff;color:var(--cyan-d);border:1px solid var(--cyan)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--light);font-weight:700;font-size:12px}
+.score{font-weight:700;font-size:18px}
+.score.good{color:var(--green)}.score.mid{color:#B36B00}.score.bad{color:var(--red)}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.seg button{border:0;border-right:1px solid var(--border);background:#fff;padding:6px 14px;font-size:13px}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--cyan);color:#fff}
+label.f{display:block;font-weight:700;font-size:13px;margin:14px 0 6px}
+input[type=number],textarea,select{font-family:inherit;font-size:14px;border:1px solid var(--border);border-radius:6px;padding:6px 10px}
+textarea{width:100%;min-height:60px}
+.phone{width:340px;border:10px solid #222;border-radius:32px;background:#fff;padding:18px 16px;margin:0 auto}
+.phone h3{margin:0 0 4px;font-size:16px}
+.phone .q{margin:14px 0 6px;font-size:13.5px;font-weight:700}
+.phone .opts{display:flex;gap:6px}
+.phone .opts button{flex:1;border:1px solid var(--border);background:#fff;border-radius:8px;padding:8px 0;font-size:13px}
+.phone .opts button.on{background:var(--cyan);border-color:var(--cyan);color:#fff}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.kpi .card{margin:0}
+.kpi .v{font-size:26px;font-weight:700;color:var(--orange)}
+.kpi .l{font-size:12px;color:var(--mid)}
+.kpi .c{font-size:12px}
+.legend{font-size:12px;color:var(--mid)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin:0 4px 0 12px}
+.cardgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.guest h3{margin:0;font-size:17px}
+.guest .do{background:var(--green-l);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:13px}
+.guest .dont{background:var(--red-l);border-radius:6px;padding:8px 12px;margin-top:8px;font-size:13px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 24px;border-radius:24px;font-size:13px;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+.note{font-size:12px;color:var(--mid)}
+@media (max-width:820px){
+  .layout{flex-direction:column}
+  nav{width:100%;display:flex;overflow-x:auto;padding:0;border-right:0;border-bottom:1px solid var(--border)}
+  nav .grp{display:none}
+  nav button{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;width:auto}
+  nav button.on{border-bottom-color:var(--cyan)}
+  main{padding:16px}
+  .src,.kpi,.cardgrid{grid-template-columns:1fr}
+  .phone{width:100%}
+}
+
+/* ---------- パスワード入力画面（閲覧ゲート） ---------- */
+body.locked > :not(#gate){visibility:hidden}
+#gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#F7F8FA 0%,#E0F7FA 100%);display:flex;align-items:center;justify-content:center;padding:24px}
+#gate[hidden]{display:none}
+.gate-box{background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.08);padding:40px 36px 32px;width:100%;max-width:420px;text-align:center;border-top:5px solid var(--cyan)}
+.gate-lock{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:var(--cyan-l);display:flex;align-items:center;justify-content:center}
+.gate-lock svg{width:32px;height:32px;stroke:var(--cyan-d);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.gate-box h2{margin:0;font-size:20px}
+.gate-box .sub{color:var(--mid);font-size:13px;margin:6px 0 22px}
+.gate-box .sub small{display:block;margin-top:2px}
+.gate-field{position:relative}
+.gate-field input{width:100%;font-family:inherit;font-size:18px;letter-spacing:.1em;padding:12px 48px 12px 14px;border:2px solid var(--border);border-radius:8px;outline:none;transition:border-color .15s}
+.gate-field input:focus{border-color:var(--cyan)}
+.gate-field.err input{border-color:var(--red);animation:shake .3s}
+.gate-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--mid);font-size:12px;padding:6px}
+.gate-msg{min-height:20px;font-size:13px;color:var(--red);margin:8px 0 4px}
+.gate-btn{width:100%;margin-top:8px;border:0;border-radius:8px;background:var(--orange);color:#fff;font-size:16px;font-weight:700;padding:13px}
+.gate-btn:disabled{opacity:.5;cursor:default}
+.gate-foot{margin-top:22px;font-size:11.5px;color:var(--mid);line-height:1.6}
+.gate-foot b{color:var(--dark)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+</style>
+</head>
+<body class="locked">
+<!-- ===== パスワード入力画面 ===== -->
+<div id="gate">
+  <form class="gate-box" id="gateForm" autocomplete="off">
+    <div class="gate-lock"><svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg></div>
+    <h2>今週の一手 デイサービス版</h2>
+    <p class="sub">関係者限定のデモ画面です。<small>閲覧用パスワードを入力してください。</small></p>
+    <div class="gate-field" id="gateField">
+      <input type="password" id="gatePw" placeholder="パスワード" aria-label="閲覧用パスワード" autofocus>
+      <button type="button" class="gate-eye" id="gateEye" aria-label="パスワードを表示">表示</button>
+    </div>
+    <div class="gate-msg" id="gateMsg" role="alert"></div>
+    <button type="submit" class="gate-btn" id="gateBtn">開く</button>
+    <p class="gate-foot"><b>GENIAC-PRIZE 2026 実証用プロトタイプ</b><br>株式会社ロジック・ブレイン<br>デモ用の架空データです（実在の施設・人物とは無関係）。</p>
+  </form>
+</div>
+
+<div class="demo-bar">デモ用の架空データです。実在の施設・人物とは関係ありません（GENIAC-PRIZE 2026 実証用プロトタイプ）</div>
+<header>
+  <div class="brand">今週の一手<small>デイサービスの定着支援　性格分析 × 国産基盤モデル　｜　株式会社ロジック・ブレイン</small></div>
+</header>
+<div class="layout">
+  <nav id="nav">
+    <div class="grp" data-l="管理者向け"></div>
+    <button data-v="week" class="on">今週の一手</button>
+    <button data-v="result">1on1の結果入力</button>
+    <button data-v="pair">育成ペアの推奨</button>
+    <button data-v="shift">送迎・入浴の担当編成</button>
+    <div class="grp">現場向け</div>
+    <button data-v="field">現場入力（スマホ）</button>
+    <button data-v="guest">接し方カード</button>
+    <div class="grp">検証</div>
+    <button data-v="verify">効果検証</button>
+  </nav>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------- 架空データ ----------
+const B5 = ['開放性','誠実性','外向性','協調性','神経症傾向'];
+const DATA = {
+  care: {
+    org:'ひまわりデイサービス（架空・地域密着型通所介護4事業所）', unit:'事業所', mgr:'管理者', mentor:'OJT担当', newbie:'新人職員',
+    week:3,
+    targets:[
+      {name:'山田 美咲', role:'介護職・入職4ヶ月', unit:'ひまわり事業所', risk:72, trend:[38,45,58,72], mins:20,
+       why:'入浴介助を2週続けてひとりで回している。記録に「時間が押した」「聞けなかった」が出ている。神経症傾向が高く、ひとりで抱え込みやすいタイプ。',
+       b5:[3,4,2,3,5],
+       text:['「山田さん、入浴2人分を一人で回して<mark>時間が押した</mark>」（申し送り 10/21）','「帰り便で道順が分からず、<mark>誰にも聞けないまま</mark>到着が遅れた」（送迎記録 10/23）'],
+       stress:'高ストレス判定（初回）。仕事の量的負担と上司支援の不足が高い。隔週サーベイの退職意向は 2→4 に悪化。',
+       open:'「入浴、2週続けて大変だったね。体はどう？」から入る。仕事の評価の話は最初にしない。',
+       qs:['入浴介助で「誰かに聞きたかった」場面はあった？ そのときどうした？','いま一番しんどいのは、体力・覚えること・人間関係のどれに近い？','OJTの佐藤さんには、どんなことなら聞きやすい？'],
+       ng:'「みんな最初はそう」「慣れれば大丈夫」は避ける。不安を軽く扱われたと受け取りやすい。',
+       act:'来週の入浴介助は佐藤さんと同じ日に組む（担当編成の画面で提案済み）'},
+      {name:'中村 健太', role:'介護職・3年目（OJT担当／送迎兼務）', unit:'ひまわり事業所', risk:54, trend:[30,33,41,54], mins:15,
+       why:'新人2名のOJTと送迎3便が重なり、記録に「時間がない」「教える暇がない」が増加。誠実性が高く、手を抜けずに負担をためやすい。',
+       b5:[3,4,3,2,3],
+       text:['「新人対応と送迎で自分の<mark>記録が後回し</mark>」（申し送り 10/20）','「入浴の段取りを教える<mark>時間がない</mark>」（申し送り 10/24）'],
+       stress:'ストレスは中程度。「仕事の量」が前回より上昇。',
+       open:'「新人2人を見てくれていて本当に助かっている」と先に具体的に伝える。',
+       qs:['2人のうち、今どちらに一番時間を取られている？','送迎と指導が重なるのは週に何日？','他の人に任せられそうなものは？'],
+       ng:'「もう少し頑張って」は避ける。すでに限界まで頑張っているタイプ。',
+       act:'新人1名の担当を小林さんへ移し、送迎の午前便を1本減らす案（育成ペアの画面）'},
+      {name:'高橋 陽子', role:'介護福祉士・8年目', unit:'すみれ事業所', risk:41, trend:[40,39,40,41], mins:15,
+       why:'リスクは横ばいだが、記録に同僚への不満が繰り返し出ている。協調性が低めで、摩擦が表に出る前に拾っておきたい。',
+       b5:[3,4,3,2,2],
+       text:['「早番からの引き継ぎが<mark>毎回雑</mark>」（申し送り 10/22）'],
+       stress:'ストレスは低い。退職意向も低い（1）。',
+       open:'「すみれ事業所の流れ、ベテランの目から見てどう？」と意見を求める形で入る。',
+       qs:['引き継ぎで困っているのは、どの時間帯・どの項目？','改善するなら、どう変えたい？'],
+       ng:'特定の人の名前を出して是非を問わない。',
+       act:'早番から遅番への引き継ぎ手順の見直しを、高橋さん主導で提案してもらう'}
+    ],
+    pairs:[
+      {n:'山田 美咲（入職4ヶ月）', m:[{name:'佐藤 由美',s:86,r:'協調性が高く、聞かれる前に声をかけるタイプ。過去に担当した新人3名が全員1年以上定着。'},{name:'中村 健太',s:61,r:'誠実性は高いが、現在2名を担当中で送迎も兼務しており余力が少ない。'},{name:'高橋 陽子',s:44,r:'指導は的確だが協調性が低めで、神経症傾向の高い新人は萎縮しやすい。'}]},
+      {n:'伊藤 大輝（入職2ヶ月）', m:[{name:'小林 誠',s:81,r:'外向性がともに高く、会話で覚えるスタイルが合う。レク進行の指導に向く。'},{name:'中村 健太',s:72,r:'入浴介助の手順を言葉にして教えられるので、抜けの多い新人を補える。'},{name:'佐藤 由美',s:68,r:'相性は良いが、山田さんとの組合せを優先。'}]}
+    ],
+    shift:[
+      {d:'10/28（火）入浴介助', a:'山田 美咲', b:'高橋 陽子', lv:'bad', c:'新人の神経症傾向が高く、相手の協調性が低い組合せ。ひとりで抱え込むリスク。', alt:'佐藤 由美 に交代を推奨'},
+      {d:'10/29（水）送迎 午前便', a:'中村 健太', b:'伊藤 大輝', lv:'mid', c:'相性は悪くないが、中村さんの負荷が今週すでに高い。', alt:'1便だけ小林 誠に交代も可'},
+      {d:'10/30（木）フロア・レク', a:'佐藤 由美', b:'山田 美咲', lv:'good', c:'推奨ペア。独り立ち項目「入浴介助の一連」の実地指導に向く。', alt:'このままでよい'},
+      {d:'10/31（金）早番→遅番', a:'高橋 陽子', b:'早番メンバー', lv:'mid', c:'引き継ぎでの摩擦が記録に出ている時間帯。', alt:'引き継ぎ5分を固定枠に'}
+    ],
+    guests:[
+      {name:'A様（88歳・要介護3）', tipi:'協調性 高／神経症傾向 高', src:'TIPI-J（ご家族記入）＋通所介護記録', do:'入浴前に「今日は何番目がいいですか」と順番を選んでもらう。同じ職員が続けて担当すると落ち着く。', dont:'急かす声かけ。「早くしましょう」で入浴拒否が出やすい（記録で過去4件）。'},
+      {name:'B様（82歳・要介護2）', tipi:'外向性 高／開放性 高', src:'TIPI-J（職員記入）＋連絡帳', do:'昔の仕事（教師）の話題で会話を始めると協力的。レクで役割を頼むと喜ばれる。', dont:'黙って介助を始めること。「何をされるか分からない」で興奮が出やすい。'},
+      {name:'C様（91歳・要介護4）', tipi:'誠実性 高／外向性 低', src:'通所介護記録（国産基盤モデル推定・確度 中）', do:'毎回同じ順番・同じ言葉で声をかける。送迎の時刻が変わるときは前日に伝える。', dont:'大勢で一度に囲むこと。レクへの強い誘い。'},
+      {name:'D様（79歳・要介護1）', tipi:'神経症傾向 低／協調性 低', src:'TIPI-J（ご家族記入）', do:'本人の意見を先に聞き、理由を短く説明する。送迎の席は固定にする。', dont:'「決まりなので」だけで押し切ること。'}
+    ]
+  }
+};
+
+// 検証ダッシュボード（8週・介入群 vs 対照群）
+const VERIFY = {
+  weeks:['W1','W2','W3','W4','W5','W6','W7','W8'],
+  prep:{t:'管理者の面談準備時間（分/週）', a:[62,48,40,35,31,30,28,27], b:[60,61,58,62,59,60,61,58]},
+  quit:{t:'退職意向スコア（新人平均・5段階）', a:[3.1,3.0,2.8,2.6,2.5,2.3,2.3,2.2], b:[3.0,3.1,3.1,3.2,3.0,3.1,3.2,3.1]},
+  hit:{t:'1on1の当たり率（%）', a:[55,61,68,72,70,76,78,80], b:null}
+};
+const KPI = [
+  {l:'新人の独り立ち日数（入浴介助）', a:'74日', b:'96日', c:'対照群より 22日短い'},
+  {l:'指導役のフォロー時間（週）', a:'3.2時間', b:'4.6時間', c:'1.4時間減'},
+  {l:'高ストレス者の比率', a:'18% → 12%', b:'19% → 20%', c:'6ポイント改善'}
+];
+
+// ---------- 状態と描画 ----------
+const mode='care';
+let view='week', openIdx=0;
+const results={};
+const $=s=>document.querySelector(s);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function D(){return DATA[mode]}
+
+function bars(v){return '<div class="bars">'+B5.map((k,i)=>`<span>${k}</span><div class="bar"><i class="${v[i]>=4?'hi':''}" style="width:${v[i]/5*100}%"></i></div><span>${v[i]}</span>`).join('')+'</div>'}
+function spark(arr){
+  const w=90,h=28,mx=100;const pts=arr.map((v,i)=>`${i*(w/(arr.length-1))},${h-v/mx*h}`).join(' ');
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h+2}"><polyline points="${pts}" fill="none" stroke="#CC0000" stroke-width="2"/></svg>`;
+}
+
+const VIEWS={
+week(){
+  const d=D();
+  const total=d.targets.reduce((s,t)=>s+t.mins,0);
+  return `<h1>今週の一手</h1>
+  <p class="lead">${d.org}　｜　集中実証 第${d.week}週（月曜 8:00 更新）　｜　今週の1on1は${d.targets.length}名・合計${total}分</p>
+  ${d.targets.map((t,i)=>`
+  <div class="card accent ${i===openIdx?'open':''}" data-i="${i}">
+    <div class="target" data-toggle="${i}">
+      <div class="rank r${i+1}">${i+1}</div>
+      <div><h3>${t.name}　<span class="pill">${t.role}</span><span class="pill">${t.unit}</span></h3>
+        <div class="why">${t.why}</div></div>
+      <div class="risk">離職リスク<b>${t.risk}</b>${spark(t.trend)}<br>4週の推移</div>
+    </div>
+    <div class="detail">
+      <div class="src">
+        <div><h4>① 性格（ビッグファイブ 1〜5・TOiTOiの診断結果）</h4>${bars(t.b5)}</div>
+        <div><h4>② 記録テキスト（国産基盤モデルが読解）</h4>${t.text.map(x=>`<div class="quote">${x}</div>`).join('')}</div>
+        <div><h4>③ ストレス・サーベイ</h4>${t.stress}</div>
+      </div>
+      <div class="script">
+        <h4>1on1の台本（${t.mins}分）</h4>
+        <div><b>入り方：</b>${t.open}</div>
+        <div style="margin-top:6px"><b>聞くこと</b></div>
+        <ol>${t.qs.map(q=>`<li>${q}</li>`).join('')}</ol>
+        <div class="ng">避けること：${t.ng}</div>
+      </div>
+      <p style="margin:12px 0 0"><span class="pill cyan">あわせて打つ手</span>${t.act}</p>
+      <p style="margin:12px 0 0"><button class="btn" data-go="result" data-who="${i}">面談したら結果を入力</button></p>
+    </div>
+  </div>`).join('')}
+  <p class="note">リスクの数値は、性格・記録テキスト・サーベイの3つを合わせた当社の指標（0〜100）です。数値だけで判断せず、必ず1on1で本人の話を聞いてください。</p>`;
+},
+result(){
+  const d=D();
+  return `<h1>1on1の結果入力</h1>
+  <p class="lead">面談後、木曜までに入力してください（1名あたり約3分）。この入力が「AIの当たり率」と「準備時間の削減」の検証データになります。</p>
+  ${d.targets.map((t,i)=>{const r=results[mode+i]||{};return `
+  <div class="card">
+    <h3 style="margin:0 0 4px">${t.name}　<span class="pill">${t.role}</span>${r.saved?'<span class="pill green">入力済み</span>':''}</h3>
+    <label class="f">AIの提示は当たっていましたか？</label>
+    <div class="seg" data-k="hit" data-i="${i}">${['当たっていた','一部当たっていた','外れていた'].map(x=>`<button class="${r.hit===x?'on':''}">${x}</button>`).join('')}</div>
+    <label class="f">台本は役に立ちましたか？（5段階）</label>
+    <div class="seg" data-k="use" data-i="${i}">${[1,2,3,4,5].map(x=>`<button class="${r.use==x?'on':''}">${x}</button>`).join('')}</div>
+    <div class="row" style="gap:24px">
+      <div><label class="f">面談の準備にかかった時間</label><input type="number" min="0" value="${r.prep??5}" data-k="prep" data-i="${i}" style="width:80px"> 分</div>
+      <div><label class="f">面談の実施時間</label><input type="number" min="0" value="${r.dur??t.mins}" data-k="dur" data-i="${i}" style="width:80px"> 分</div>
+    </div>
+    <label class="f">メモ（任意・AIの改善に使います）</label>
+    <textarea data-k="memo" data-i="${i}" placeholder="例：夜勤の不安が一番大きかった。人間関係は問題なし。">${r.memo||''}</textarea>
+    <p style="margin:12px 0 0"><button class="btn" data-save="${i}">保存</button></p>
+  </div>`}).join('')}`;
+},
+pair(){
+  const d=D();
+  return `<h1>育成ペアの推奨</h1>
+  <p class="lead">${d.newbie}と${d.mentor}の組合せを、性格の相性と過去の定着実績から推奨します。</p>
+  ${d.pairs.map(p=>`<div class="card"><h3 style="margin:0 0 10px">${p.n}</h3>
+  <table><tr><th style="width:150px">${d.mentor}候補</th><th style="width:80px">相性</th><th>理由</th></tr>
+  ${p.m.map((m,i)=>`<tr><td><b>${m.name}</b>${i===0?'<br><span class="pill orange">推奨</span>':''}</td>
+  <td><span class="score ${m.s>=80?'good':m.s>=60?'mid':'bad'}">${m.s}</span></td><td>${m.r}</td></tr>`).join('')}
+  </table></div>`).join('')}
+  <p class="note">相性スコアは当社の性格分析エンジンによる指標（0〜100）です。最終的な割当は${d.mgr}が判断します。</p>`;
+},
+shift(){
+  const d=D();
+  const lab={bad:['red','要注意'],mid:['orange','注意'],good:['green','推奨']};
+  return `<h1>送迎・入浴の担当編成</h1>
+  <p class="lead">来週の担当表から、摩擦の起きやすい組合せと負荷の偏りを知らせます。担当表そのものは、これまでどおり管理者が作成してください。</p>
+  <div class="card"><table><tr><th style="width:150px">日・場面</th><th style="width:220px">組合せ</th><th style="width:80px">判定</th><th>理由</th><th style="width:200px">提案</th></tr>
+  ${d.shift.map(s=>`<tr><td>${s.d}</td><td>${s.a} × ${s.b}</td><td><span class="pill ${lab[s.lv][0]}">${lab[s.lv][1]}</span></td><td>${s.c}</td><td>${s.alt}</td></tr>`).join('')}
+  </table></div>`;
+},
+field(){
+  const d=D();
+  return `<h1>現場入力（スマホ）</h1>
+  <p class="lead">${d.mentor}は週1回5分、${d.newbie}は隔週で2分。スマホから入力します。</p>
+  <div class="row">
+    <div class="card" style="background:none;border:0;padding:0">
+      <div class="phone">
+        <h3>新人の様子チェック</h3><div class="note">${d.mentor}：${mode==='care'?'佐藤 由美':'岡田 翔'} → ${d.targets[0].name}</div>
+        ${[['質問・相談の量は？',['減った','変わらない','増えた']],['表情・元気さは？',['心配','ふつう','良い']],['今週できるようになったことは？',['なし','1つ','2つ以上']],['来週、師長・管理者に見てほしい？',['はい','いいえ']]].map((q,k)=>`<div class="q">${q[0].replace('師長・管理者',d.mgr)}</div><div class="opts" data-f="a${k}">${q[1].map(o=>`<button>${o}</button>`).join('')}</div>`).join('')}
+        <div class="q">ひとこと（任意）</div><textarea placeholder="例：点滴の準備で手が止まることがある"></textarea>
+        <p><button class="btn" style="width:100%" data-send>送信</button></p>
+      </div>
+    </div>
+    <div class="card" style="background:none;border:0;padding:0">
+      <div class="phone">
+        <h3>今週のふりかえり（3問）</h3><div class="note">${d.newbie}：${d.targets[0].name}／回答は${d.mgr}に個別には表示されません</div>
+        ${['この職場で、来年も働いていたいと思う','困ったとき、相談できる人がいる','仕事の量は、今の自分に合っている'].map((q,k)=>`<div class="q">${q}</div><div class="opts" data-f="b${k}">${['1','2','3','4','5'].map(o=>`<button>${o}</button>`).join('')}</div>`).join('')}
+        <div class="note" style="margin-top:6px">1＝そう思わない　5＝そう思う</div>
+        <p><button class="btn" style="width:100%" data-send>送信</button></p>
+      </div>
+    </div>
+  </div>`;
+},
+guest(){
+  const d=D();
+  return `<h1>接し方カード</h1>
+  <p class="lead">利用者さまごとに、入浴・送迎・レクでの声かけで気をつけることをまとめたカードです。新人職員に配布します。性格の推定は、ご家族・職員が答える10問（TIPI-J）と、通所介護記録・連絡帳からの国産基盤モデルによる推定の2本で行います。</p>
+  <div class="cardgrid">${d.guests.map(g=>`<div class="card guest"><h3>${g.name}</h3>
+  <div style="margin-top:4px"><span class="pill cyan">${g.tipi}</span></div><div class="note">推定の出どころ：${g.src}</div>
+  <div class="do"><b>こうすると良い：</b>${g.do}</div><div class="dont"><b>避けたい：</b>${g.dont}</div></div>`).join('')}</div>
+  <p class="note">ご家族への説明と同意を得たうえで作成します。</p>`;
+},
+verify(){
+  return `<h1>効果検証（8週間）</h1>
+  <p class="lead">介入する6事業所（AIの提示あり）と、比べる4事業所（性格分析のみ）の比較。11月30日提出の提案書・デモ動画にそのまま使います。</p>
+  <div class="kpi">${KPI.map(k=>`<div class="card"><div class="l">${k.l}</div><div class="v">${k.a}</div><div class="c">比べる4事業所 ${k.b}　<b style="color:var(--green)">${k.c}</b></div></div>`).join('')}</div>
+  <div class="row">${['prep','quit','hit'].map(k=>`<div class="card"><b>${VERIFY[k].t}</b>${chart(VERIFY[k])}</div>`).join('')}</div>
+  <div class="card"><b>後ろ向き検証（過去3年の離職者 41名）</b>
+  <table style="margin-top:8px"><tr><th>検知率（再現率）</th><th>誤検知率</th><th>兆候が出たのは離職の</th></tr>
+  <tr><td class="score good">68%</td><td class="score mid">21%</td><td class="score">平均 11週間前</td></tr></table>
+  <p class="note">上の数値はすべてデモ用の架空の値です。実証で得た値に置き換えます。</p></div>
+  <p class="legend">凡例<i style="background:var(--orange)"></i>介入する6事業所<i style="background:#999"></i>比べる4事業所</p>`;
+}
+};
+
+function chart(s){
+  const W=300,H=150,P=28;const all=[...s.a,...(s.b||[])];const mx=Math.max(...all)*1.1,mn=Math.min(0,Math.min(...all));
+  const x=i=>P+i*(W-P-8)/(s.a.length-1), y=v=>H-P-(v-mn)/(mx-mn)*(H-P-10);
+  const line=(arr,c)=>`<polyline points="${arr.map((v,i)=>x(i)+','+y(v)).join(' ')}" fill="none" stroke="${c}" stroke-width="2.5"/>`+arr.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="2.5" fill="${c}"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;margin-top:8px">
+  <line x1="${P}" y1="${H-P}" x2="${W-8}" y2="${H-P}" stroke="#DDD"/>
+  ${VERIFY.weeks.map((w,i)=>`<text x="${x(i)}" y="${H-10}" font-size="10" fill="#666" text-anchor="middle">${w}</text>`).join('')}
+  ${s.b?line(s.b,'#999'):''}${line(s.a,'#F29600')}
+  <text x="${x(7)}" y="${y(s.a[7])-8}" font-size="11" fill="#F29600" text-anchor="end" font-weight="700">${s.a[7]}</text>
+  ${s.b?`<text x="${x(7)}" y="${y(s.b[7])-8}" font-size="11" fill="#666" text-anchor="end">${s.b[7]}</text>`:''}
+  </svg>`;
+}
+
+function render(){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  document.querySelector('nav .grp').textContent=D().mgr+'向け';
+  $('#main').innerHTML=VIEWS[view]();
+  window.scrollTo(0,0);
+}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button,[data-toggle]'); if(!b) return;
+  if(b.dataset.v){view=b.dataset.v;render();return}
+  if(b.dataset.toggle!==undefined){const i=+b.dataset.toggle;openIdx=openIdx===i?-1:i;render();return}
+  if(b.dataset.go){view=b.dataset.go;render();return}
+  const seg=b.closest('.seg');
+  if(seg){const key=mode+seg.dataset.i;results[key]=results[key]||{};results[key][seg.dataset.k]=b.textContent;seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));return}
+  const opts=b.closest('.opts');
+  if(opts){opts.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));return}
+  if(b.dataset.save!==undefined){
+    const i=b.dataset.save,key=mode+i;results[key]=results[key]||{};
+    document.querySelectorAll(`[data-i="${i}"][data-k]`).forEach(el=>{if(el.tagName!=='DIV')results[key][el.dataset.k]=el.value});
+    results[key].saved=true;toast('保存しました（デモのため画面を閉じると消えます）');render();return}
+  if(b.dataset.send!==undefined){toast('送信しました（デモ）');return}
+});
+render();
+</script>
+
+<script>
+// ===== パスワードゲート =====
+// 平文のパスワードはこのファイルに置かず、SHA-256 のハッシュだけを持つ。
+// 変更方法：ブラウザの開発者ツール（Console）で  await gateHash('新しいパスワード')  を実行し、
+//           表示された64桁の文字列を下の GATE_HASH に貼り替える。
+// 注意：クライアント側のみの簡易ゲートです。HTMLソースを読める人には中身が見えるため、
+//       本番公開時はサーバー側認証（Basic認証・組織認証）に置き換えてください。
+const GATE_HASH = '8315123b03096d66ace057b7000bffdcd273f931ccc1952a41277186cbc0b0c8';   // 初期パスワード: geniac2026
+const GATE_KEY  = 'geniac_demo_unlocked';
+
+async function gateHash(str){
+  const data = new TextEncoder().encode(str);
+  if (window.crypto && crypto.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  return sha256Fallback(data);
+}
+// crypto.subtle が使えない環境（古いブラウザ等）向けの純JS実装
+function sha256Fallback(bytes){
+  const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const l=bytes.length, bl=l*8, pad=((l+9+63)>>6)<<6, m=new Uint8Array(pad); m.set(bytes); m[l]=0x80;
+  const dv=new DataView(m.buffer); dv.setUint32(pad-4,bl>>>0); dv.setUint32(pad-8,Math.floor(bl/2**32));
+  const rr=(x,n)=>(x>>>n)|(x<<(32-n)), w=new Uint32Array(64);
+  for(let i=0;i<pad;i+=64){
+    for(let t=0;t<16;t++)w[t]=dv.getUint32(i+t*4);
+    for(let t=16;t<64;t++){const s0=rr(w[t-15],7)^rr(w[t-15],18)^(w[t-15]>>>3),s1=rr(w[t-2],17)^rr(w[t-2],19)^(w[t-2]>>>10);w[t]=(w[t-16]+s0+w[t-7]+s1)>>>0;}
+    let [a,b,c,d,e,f,g,h]=H;
+    for(let t=0;t<64;t++){const S1=rr(e,6)^rr(e,11)^rr(e,25),ch=(e&f)^(~e&g),t1=(h+S1+ch+K[t]+w[t])>>>0,S0=rr(a,2)^rr(a,13)^rr(a,22),mj=(a&b)^(a&c)^(b&c),t2=(S0+mj)>>>0;h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;}
+    H=H.map((v,i)=>(v+[a,b,c,d,e,f,g,h][i])>>>0);
+  }
+  return H.map(v=>v.toString(16).padStart(8,'0')).join('');
+}
+
+(function(){
+  const gate=document.getElementById('gate'), form=document.getElementById('gateForm'),
+        pw=document.getElementById('gatePw'), msg=document.getElementById('gateMsg'),
+        field=document.getElementById('gateField'), btn=document.getElementById('gateBtn'),
+        eye=document.getElementById('gateEye');
+  let fails=0;
+  function unlock(){ gate.hidden=true; document.body.classList.remove('locked'); try{sessionStorage.setItem(GATE_KEY,'1')}catch(e){} }
+  document.body.classList.add('locked');
+  try{ if(sessionStorage.getItem(GATE_KEY)==='1'){ unlock(); return; } }catch(e){}
+  setTimeout(()=>pw.focus(),50);
+  eye.addEventListener('click',()=>{ const show=pw.type==='password'; pw.type=show?'text':'password'; eye.textContent=show?'隠す':'表示'; pw.focus(); });
+  pw.addEventListener('input',()=>{ field.classList.remove('err'); msg.textContent=''; });
+  form.addEventListener('submit',async ev=>{
+    ev.preventDefault();
+    const v=pw.value.trim();
+    if(!v){ msg.textContent='パスワードを入力してください。'; field.classList.add('err'); return; }
+    btn.disabled=true; btn.textContent='確認中…';
+    const ok=(await gateHash(v))===GATE_HASH;
+    btn.disabled=false; btn.textContent='開く';
+    if(ok){ unlock(); return; }
+    fails++; pw.value=''; field.classList.add('err');
+    msg.textContent = fails>=3 ? 'パスワードが違います。担当者（ロジック・ブレイン）にご確認ください。' : 'パスワードが違います。';
+    pw.focus();
+  });
+})();
+</script>
+</body>
+</html>
