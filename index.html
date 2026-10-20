@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>今週の一手 デイサービス版</title>
+<title>今週の声かけ デイサービス版</title>
 <style>
 :root{
   --cyan:#00BCD4; --cyan-d:#0097A7; --cyan-l:#E0F7FA;
@@ -135,7 +135,7 @@ body.locked > :not(#gate){visibility:hidden}
 <div id="gate">
   <form class="gate-box" id="gateForm" autocomplete="off">
     <div class="gate-lock"><svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg></div>
-    <h2>今週の一手 デイサービス版</h2>
+    <h2>今週の声かけ デイサービス版</h2>
     <p class="sub">関係者限定のデモ画面です。<small>閲覧用パスワードを入力してください。</small></p>
     <div class="gate-field" id="gateField">
       <input type="password" id="gatePw" placeholder="パスワード" aria-label="閲覧用パスワード" autofocus>
@@ -149,16 +149,16 @@ body.locked > :not(#gate){visibility:hidden}
 
 <div class="demo-bar">デモ用の架空データです。実在の施設・人物とは関係ありません（GENIAC-PRIZE 2026 実証用プロトタイプ）</div>
 <header>
-  <div class="brand">今週の一手<small>デイサービスの定着支援　性格分析 × 国産基盤モデル　｜　株式会社ロジック・ブレイン</small></div>
+  <div class="brand">今週の声かけ<small>デイサービスの定着支援　性格分析 × 国産基盤モデル　｜　株式会社ロジック・ブレイン</small></div>
 </header>
 <div class="layout">
   <nav id="nav">
     <div class="grp" data-l="管理者向け"></div>
-    <button data-v="week" class="on">今週の一手</button>
-    <button data-v="result">1on1の結果入力</button>
-    <button data-v="pair">育成ペアの推奨</button>
-    <div class="grp">現場向け</div>
-    <button data-v="field">現場入力（スマホ）</button>
+    <button data-v="week" class="on">今週の声かけ</button>
+    <button data-v="observe">観察を入力</button>
+    <button data-v="record">声かけの記録</button>
+    <div class="grp">職員向け</div>
+    <button data-v="field">セルフチェック（スマホ）</button>
     <button data-v="guest">接し方カード</button>
     <div class="grp">検証</div>
     <button data-v="verify">効果検証</button>
@@ -170,43 +170,47 @@ body.locked > :not(#gate){visibility:hidden}
 <script>
 // ---------- 架空データ ----------
 const B5 = ['開放性','誠実性','外向性','協調性','神経症傾向'];
+const LV = {'面談':['red','面談する（15分）'],'ひと声':['orange','ひと声かける（5分）'],'見守り':['cyan','見守る']};
 const DATA = {
   care: {
-    org:'ひまわりデイサービス（架空・地域密着型通所介護4事業所）', unit:'事業所', mgr:'管理者', mentor:'OJT担当', newbie:'新人職員',
-    week:3,
+    org:'ひまわりデイサービス（架空・地域密着型通所介護4事業所）', unit:'事業所', mgr:'施設長',
+    week:3, staffCount:9,
     targets:[
-      {name:'山田 美咲', role:'介護職・入職4ヶ月', unit:'ひまわり事業所', risk:72, trend:[38,45,58,72], mins:20,
-       why:'入浴介助を2週続けてひとりで回している。記録に「時間が押した」「聞けなかった」が出ている。神経症傾向が高く、ひとりで抱え込みやすいタイプ。',
-       b5:[3,4,2,3,5],
-       text:['「山田さん、入浴2人分を一人で回して<mark>時間が押した</mark>」（申し送り 10/21）','「帰り便で道順が分からず、<mark>誰にも聞けないまま</mark>到着が遅れた」（送迎記録 10/23）'],
-       stress:'高ストレス判定（初回）。仕事の量的負担と上司支援の不足が高い。隔週サーベイの退職意向は 2→4 に悪化。',
-       open:'「入浴、2週続けて大変だったね。体はどう？」から入る。仕事の評価の話は最初にしない。',
-       qs:['入浴介助で「誰かに聞きたかった」場面はあった？ そのときどうした？','いま一番しんどいのは、体力・覚えること・人間関係のどれに近い？','OJTの佐藤さんには、どんなことなら聞きやすい？'],
-       ng:'「みんな最初はそう」「慣れれば大丈夫」は避ける。不安を軽く扱われたと受け取りやすい。',
-       act:'OJT担当を佐藤さんに固定し、入浴介助は佐藤さんと同じ日に組む（育成ペアの画面で推奨済み）'},
-      {name:'中村 健太', role:'介護職・3年目（OJT担当／送迎兼務）', unit:'ひまわり事業所', risk:54, trend:[30,33,41,54], mins:15,
-       why:'新人2名のOJTと送迎3便が重なり、記録に「時間がない」「教える暇がない」が増加。誠実性が高く、手を抜けずに負担をためやすい。',
-       b5:[3,4,3,2,3],
-       text:['「新人対応と送迎で自分の<mark>記録が後回し</mark>」（申し送り 10/20）','「入浴の段取りを教える<mark>時間がない</mark>」（申し送り 10/24）'],
-       stress:'ストレスは中程度。「仕事の量」が前回より上昇。',
-       open:'「新人2人を見てくれていて本当に助かっている」と先に具体的に伝える。',
-       qs:['2人のうち、今どちらに一番時間を取られている？','送迎と指導が重なるのは週に何日？','他の人に任せられそうなものは？'],
-       ng:'「もう少し頑張って」は避ける。すでに限界まで頑張っているタイプ。',
-       act:'新人1名（伊藤さん）のOJT担当を小林さんへ移す案（育成ペアの画面）。送迎・入浴の負荷は管理者と相談'},
-      {name:'高橋 陽子', role:'介護福祉士・8年目', unit:'すみれ事業所', risk:41, trend:[40,39,40,41], mins:15,
-       why:'リスクは横ばいだが、記録に同僚への不満が繰り返し出ている。協調性が低めで、摩擦が表に出る前に拾っておきたい。',
-       b5:[3,4,3,2,2],
+      {name:'中村 健太', role:'介護職・3年目', unit:'ひまわり事業所', level:'面談', risk:71, trend:[34,40,55,71], mins:15,
+       why:'本人のチェックは「大丈夫」。けれど施設長の観察と申し送りには疲れが出ている。協調性が高く、しんどくても「大丈夫」と言いやすいタイプ。',
+       b5:[3,4,2,5,3],
+       self:{tired:2, room:4, worry:'なし', talk:'今はいい', note:'特になし'},
+       obs:['口数が減った（10/21・10/23）','昼休みにひとりで過ごすことが増えた','送迎のあと、記録が遅れがち'],
+       text:['「中村さん『<mark>もう体がもたんわ</mark>』と笑っていた」（手書きの申し送り 10/22・スキャン）','「午後の入浴、中村さん一人で<mark>3人回した</mark>」（介護記録 10/23）'],
+       gap:'本人の入力（疲れ 2／余裕 4）と、施設長の観察・記録（疲れの兆し 3件）が食い違っています。協調性が高い人の「大丈夫」は、周りに迷惑をかけたくない気持ちから出ることが多く、そのまま受け取らないほうがよいサインです。',
+       when:'送迎から戻った直後は避け、利用者さまが帰ったあとの片づけの時間に、隣で作業しながら。',
+       open:'「いつも入浴を引き受けてくれて助かってる。最近、体はどう？」と、感謝から入る。',
+       qs:['この2週間で、いちばん体にこたえた日はいつ？','入浴や送迎で、誰かに代わってほしかった場面はあった？','来週、少し軽くするとしたら、どこから外したい？'],
+       ng:'「無理しないでね」だけで終わらせない。具体的に何を減らすかまで一緒に決める。'},
+      {name:'山田 美咲', role:'介護職・2年目', unit:'ひまわり事業所', level:'ひと声', risk:56, trend:[42,45,50,56], mins:5,
+       why:'本人のチェックで「疲れ 4」「困りごと：人間関係」。施設長の観察では普段どおり明るい。外向性が高く、表では明るく振る舞うタイプ。',
+       b5:[4,3,5,3,4],
+       self:{tired:4, room:2, worry:'人間関係', talk:'はい', note:'ちょっと相談したいことがあります'},
+       obs:['いつもどおり明るい','特に変わった様子なし'],
+       text:['「レクの進め方で<mark>意見がぶつかった</mark>」（申し送り 10/21）'],
+       gap:'本人は困りごとを書いていますが、施設長からは見えていません。外向性が高い人は、つらいときも表情に出にくいことがあります。本人が「話したい」と答えているので、待たずに声をかけましょう。',
+       when:'今週中に、本人が落ち着いている午前の送迎準備の時間に。',
+       open:'「チェックに書いてくれてありがとう。少し話そうか」と、書いてくれたこと自体を受け止める。',
+       qs:['いま困っているのは、どんな場面のこと？','誰かに間に入ってほしい？ それとも、まず聞いてほしい？'],
+       ng:'相手の名前が出ても、その場でどちらが正しいかを決めない。'},
+      {name:'高橋 陽子', role:'介護福祉士・8年目', unit:'すみれ事業所', level:'見守り', risk:38, trend:[36,37,37,38], mins:0,
+       why:'本人のチェックは安定。施設長の観察で、同僚への言い方がきつい場面が2回。協調性が低めで、本人は気にしていないことが多い。',
+       b5:[3,5,3,2,2],
+       self:{tired:3, room:3, worry:'仕事の量', talk:'今はいい', note:'引き継ぎの時間が足りない'},
+       obs:['早番との引き継ぎで、言い方がきつい場面が2回'],
        text:['「早番からの引き継ぎが<mark>毎回雑</mark>」（申し送り 10/22）'],
-       stress:'ストレスは低い。退職意向も低い（1）。',
-       open:'「すみれ事業所の流れ、ベテランの目から見てどう？」と意見を求める形で入る。',
-       qs:['引き継ぎで困っているのは、どの時間帯・どの項目？','改善するなら、どう変えたい？'],
-       ng:'特定の人の名前を出して是非を問わない。',
-       act:'早番から遅番への引き継ぎ手順の見直しを、高橋さん主導で提案してもらう'}
+       gap:'本人の状態は安定しています。ただ、周りの職員の負担につながる兆しがあるので、来週も観察を続けてください。',
+       when:'今週は声かけ不要。来週の観察で同じ場面が続いたら、ひと声に上げます。',
+       open:'（来週以降）「引き継ぎ、どうしたらやりやすい？」と、意見を求める形で。',
+       qs:['引き継ぎで足りていないのは、時間？ 中身？'],
+       ng:'特定の人の名前を出して是非を問わない。'}
     ],
-    pairs:[
-      {n:'山田 美咲（入職4ヶ月）', m:[{name:'佐藤 由美',s:86,r:'協調性が高く、聞かれる前に声をかけるタイプ。過去に担当した新人3名が全員1年以上定着。'},{name:'中村 健太',s:61,r:'誠実性は高いが、現在2名を担当中で送迎も兼務しており余力が少ない。'},{name:'高橋 陽子',s:44,r:'指導は的確だが協調性が低めで、神経症傾向の高い新人は萎縮しやすい。'}]},
-      {n:'伊藤 大輝（入職2ヶ月）', m:[{name:'小林 誠',s:81,r:'外向性がともに高く、会話で覚えるスタイルが合う。レク進行の指導に向く。'},{name:'中村 健太',s:72,r:'入浴介助の手順を言葉にして教えられるので、抜けの多い新人を補える。'},{name:'佐藤 由美',s:68,r:'相性は良いが、山田さんとの組合せを優先。'}]}
-    ],
+    staff:['中村 健太','山田 美咲','高橋 陽子','佐藤 由美','小林 誠','伊藤 大輝'],
     guests:[
       {name:'A様（88歳・要介護3）', tipi:'協調性 高／神経症傾向 高', src:'ケアプラン＋TIPI-J（ご家族記入）＋通所介護記録', plan:'自宅では入浴できず、入浴への拒否が強い。本人は「人に急かされるのが嫌」と話す（ケアプラン第2表より）', do:'入浴前に「今日は何番目がいいですか」と順番を選んでもらう。同じ職員が続けて担当すると落ち着く。', dont:'急かす声かけ。「早くしましょう」で入浴拒否が出やすい（記録で過去4件）。'},
       {name:'B様（82歳・要介護2）', tipi:'外向性 高／開放性 高', src:'ケアプラン＋TIPI-J（職員記入）＋連絡帳', plan:'閉じこもりがちで会話の機会が減少。元教師で人に教えることを好む。社会参加の機会をつくる（ケアプラン第2表より）', do:'昔の仕事（教師）の話題で会話を始めると協力的。レクで役割を頼むと喜ばれる。', dont:'黙って介助を始めること。「何をされるか分からない」で興奮が出やすい。'},
@@ -219,13 +223,13 @@ const DATA = {
 // 検証ダッシュボード（8週・介入群 vs 対照群）
 const VERIFY = {
   weeks:['W1','W2','W3','W4','W5','W6','W7','W8'],
-  prep:{t:'管理者の面談準備時間（分/週）', a:[62,48,40,35,31,30,28,27], b:[60,61,58,62,59,60,61,58]},
-  quit:{t:'退職意向スコア（新人平均・5段階）', a:[3.1,3.0,2.8,2.6,2.5,2.3,2.3,2.2], b:[3.0,3.1,3.1,3.2,3.0,3.1,3.2,3.1]},
-  hit:{t:'1on1の当たり率（%）', a:[55,61,68,72,70,76,78,80], b:null}
+  load:{t:'施設長の負担（観察入力＋声かけ、分/週）', a:[34,28,24,22,20,19,19,18], b:null},
+  quit:{t:'退職意向スコア（全職員平均・5段階、高いほど辞めたい）', a:[2.6,2.6,2.5,2.4,2.3,2.2,2.2,2.1], b:[2.6,2.7,2.6,2.7,2.7,2.6,2.7,2.7]},
+  hit:{t:'声かけの当たり率（%）', a:[52,60,66,70,72,75,77,79], b:null}
 };
 const KPI = [
-  {l:'新人の独り立ち日数（入浴介助）', a:'74日', b:'96日', c:'対照群より 22日短い'},
-  {l:'指導役のフォロー時間（週）', a:'3.2時間', b:'4.6時間', c:'1.4時間減'},
+  {l:'施設長が変化に気づくまでの日数', a:'平均 6日', b:'平均 23日', c:'17日早い'},
+  {l:'職員のセルフチェック入力率', a:'87%', b:'—', c:'週1回・2分'},
   {l:'高ストレス者の比率', a:'18% → 12%', b:'19% → 20%', c:'6ポイント改善'}
 ];
 
@@ -242,88 +246,98 @@ function spark(arr){
   const w=90,h=28,mx=100;const pts=arr.map((v,i)=>`${i*(w/(arr.length-1))},${h-v/mx*h}`).join(' ');
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h+2}"><polyline points="${pts}" fill="none" stroke="#CC0000" stroke-width="2"/></svg>`;
 }
+function lvPill(l){return `<span class="pill ${LV[l][0]}">${LV[l][1]}</span>`}
 
 const VIEWS={
 week(){
   const d=D();
-  const total=d.targets.reduce((s,t)=>s+t.mins,0);
-  return `<h1>今週の一手</h1>
-  <p class="lead">${d.org}　｜　集中実証 第${d.week}週（月曜 8:00 更新）　｜　今週の1on1は${d.targets.length}名・合計${total}分</p>
+  const n=k=>d.targets.filter(t=>t.level===k).length;
+  return `<h1>今週の声かけ</h1>
+  <p class="lead">${d.org}　｜　集中実証 第${d.week}週（月曜 8:00 更新）　｜　面談 ${n('面談')}名・ひと声 ${n('ひと声')}名・見守り ${n('見守り')}名（ほかの${d.staffCount-d.targets.length}名は変化なし）</p>
+  <div class="card" style="background:var(--cyan-l);border-color:var(--cyan-l)"><b>見方</b>　職員本人のスマホ入力・${d.mgr}の観察・記録（紙はスキャン）・性格分析の4つを重ね、いま声をかけたい人を3段階で示します。<b>面談する</b>（15分・必要な人だけ）、<b>ひと声かける</b>（5分）、<b>見守る</b>（今週は声かけ不要）。月曜に更新、火〜木に声かけと観察、金曜に記録、金曜午後に30分の振り返りです。</div>
   ${d.targets.map((t,i)=>`
   <div class="card accent ${i===openIdx?'open':''}" data-i="${i}">
     <div class="target" data-toggle="${i}">
       <div class="rank r${i+1}">${i+1}</div>
-      <div><h3>${t.name}　<span class="pill">${t.role}</span><span class="pill">${t.unit}</span></h3>
+      <div><h3>${t.name}　${lvPill(t.level)}<span class="pill">${t.role}</span><span class="pill">${t.unit}</span></h3>
         <div class="why">${t.why}</div></div>
-      <div class="risk">離職リスク<b>${t.risk}</b>${spark(t.trend)}<br>4週の推移</div>
+      <div class="risk">気にかけ度<b>${t.risk}</b>${spark(t.trend)}<br>4週の推移</div>
     </div>
     <div class="detail">
-      <div class="src">
-        <div><h4>① 性格（ビッグファイブ 1〜5・TOiTOiの診断結果）</h4>${bars(t.b5)}</div>
-        <div><h4>② 記録テキスト（国産基盤モデルが読解）</h4>${t.text.map(x=>`<div class="quote">${x}</div>`).join('')}</div>
-        <div><h4>③ ストレス・サーベイ</h4>${t.stress}</div>
+      <div class="src" style="grid-template-columns:repeat(2,1fr)">
+        <div><h4>① 本人の入力（スマホ・今週）</h4>体の疲れ <b>${t.self.tired}</b>／5　気持ちの余裕 <b>${t.self.room}</b>／5<br>困りごと：${t.self.worry}　${d.mgr}と話したい：${t.self.talk}<div class="quote">「${t.self.note}」</div></div>
+        <div><h4>② ${d.mgr}の観察（今週）</h4>${t.obs.map(x=>`<div class="quote">${x}</div>`).join('')}</div>
+        <div><h4>③ 記録（国産基盤モデルが読解）</h4>${t.text.map(x=>`<div class="quote">${x}</div>`).join('')}</div>
+        <div><h4>④ 性格（ビッグファイブ 1〜5）</h4>${bars(t.b5)}</div>
       </div>
+      <div class="card" style="border-left:4px solid var(--orange);margin-bottom:12px"><b>4つを重ねて見えたこと</b><br>${t.gap}</div>
       <div class="script">
-        <h4>1on1の台本（${t.mins}分）</h4>
-        <div><b>入り方：</b>${t.open}</div>
+        <h4>声のかけ方${t.mins?`（${t.mins}分）`:''}</h4>
+        <div><b>いつ・どこで：</b>${t.when}</div>
+        <div style="margin-top:4px"><b>入り方：</b>${t.open}</div>
         <div style="margin-top:6px"><b>聞くこと</b></div>
         <ol>${t.qs.map(q=>`<li>${q}</li>`).join('')}</ol>
         <div class="ng">避けること：${t.ng}</div>
       </div>
-      <p style="margin:12px 0 0"><span class="pill cyan">あわせて打つ手</span>${t.act}</p>
-      <p style="margin:12px 0 0"><button class="btn" data-go="result" data-who="${i}">面談したら結果を入力</button></p>
+      ${t.mins?`<p style="margin:12px 0 0"><button class="btn" data-go="record" data-who="${i}">声をかけたら記録する</button></p>`:''}
     </div>
   </div>`).join('')}
-  <p class="note">リスクの数値は、性格・記録テキスト・サーベイの3つを合わせた当社の指標（0〜100）です。数値だけで判断せず、必ず1on1で本人の話を聞いてください。</p>`;
+  <p class="note">気にかけ度は、4つの情報を合わせた当社の指標（0〜100）で、退職の確率ではありません。数値だけで判断せず、最後は${d.mgr}が本人と話して決めてください。</p>`;
 },
-result(){
+observe(){
   const d=D();
-  return `<h1>1on1の結果入力</h1>
-  <p class="lead">面談後、木曜までに入力してください（1名あたり約3分）。この入力が「AIの当たり率」と「準備時間の削減」の検証データになります。</p>
-  ${d.targets.map((t,i)=>{const r=results[mode+i]||{};return `
+  const items=[['表情・声',['いつも通り','気になる']],['欠勤・遅刻',['なし','あり']],['ほかの職員とのやりとり',['いつも通り','気になる']]];
+  return `<h1>${d.mgr}の観察入力</h1>
+  <p class="lead">火〜木のうちに週1回、担当の職員について見たことを入力します（1人30秒ほど・9人で約10分）。評価ではなく、気づきの記録です。</p>
+  ${d.staff.map((nm,i)=>{const r=results[mode+'o'+i]||{};return `
   <div class="card">
-    <h3 style="margin:0 0 4px">${t.name}　<span class="pill">${t.role}</span>${r.saved?'<span class="pill green">入力済み</span>':''}</h3>
-    <label class="f">AIの提示は当たっていましたか？</label>
+    <h3 style="margin:0 0 6px">${nm}${r.saved?'　<span class="pill green">入力済み</span>':''}</h3>
+    <div class="row" style="gap:18px">${items.map((it,k)=>`<div><label class="f" style="margin-top:4px">${it[0]}</label>
+      <div class="seg" data-k="q${k}" data-i="o${i}">${it[1].map(x=>`<button class="${r['q'+k]===x?'on':''}">${x}</button>`).join('')}</div></div>`).join('')}</div>
+    <label class="f">気になった一言・場面（任意）</label>
+    <textarea data-k="memo" data-i="o${i}" style="min-height:40px" placeholder="例：送迎から戻ったあと、ため息が多かった">${r.memo||''}</textarea>
+    <p style="margin:8px 0 0"><button class="btn sub" data-save="o${i}">保存</button></p>
+  </div>`}).join('')}`;
+},
+record(){
+  const d=D();
+  return `<h1>声かけの記録</h1>
+  <p class="lead">声をかけたら、その日のうちに（遅くとも金曜までに）入力してください。1名あたり約1分。この入力が「声かけの当たり率」の検証データになります。</p>
+  ${d.targets.filter(t=>t.mins).map((t,j)=>{const i='r'+j;const r=results[mode+i]||{};return `
+  <div class="card">
+    <h3 style="margin:0 0 4px">${t.name}　${lvPill(t.level)}${r.saved?'<span class="pill green">入力済み</span>':''}</h3>
+    <label class="f">AIの見立ては当たっていましたか？</label>
     <div class="seg" data-k="hit" data-i="${i}">${['当たっていた','一部当たっていた','外れていた'].map(x=>`<button class="${r.hit===x?'on':''}">${x}</button>`).join('')}</div>
-    <label class="f">台本は役に立ちましたか？（5段階）</label>
+    <label class="f">声のかけ方は役に立ちましたか？（5段階）</label>
     <div class="seg" data-k="use" data-i="${i}">${[1,2,3,4,5].map(x=>`<button class="${r.use==x?'on':''}">${x}</button>`).join('')}</div>
-    <div class="row" style="gap:24px">
-      <div><label class="f">面談の準備にかかった時間</label><input type="number" min="0" value="${r.prep??5}" data-k="prep" data-i="${i}" style="width:80px"> 分</div>
-      <div><label class="f">面談の実施時間</label><input type="number" min="0" value="${r.dur??t.mins}" data-k="dur" data-i="${i}" style="width:80px"> 分</div>
-    </div>
+    <label class="f">次の対応</label>
+    <div class="seg" data-k="next" data-i="${i}">${['見守りに戻す','来週もひと声','面談する','業務を調整した'].map(x=>`<button class="${r.next===x?'on':''}">${x}</button>`).join('')}</div>
+    <div class="row" style="gap:24px"><div><label class="f">かかった時間</label><input type="number" min="0" value="${r.dur??t.mins}" data-k="dur" data-i="${i}" style="width:80px"> 分</div></div>
     <label class="f">メモ（任意・AIの改善に使います）</label>
-    <textarea data-k="memo" data-i="${i}" placeholder="例：夜勤の不安が一番大きかった。人間関係は問題なし。">${r.memo||''}</textarea>
+    <textarea data-k="memo" data-i="${i}" placeholder="例：入浴が続いて腰が限界だった。来週は午後の入浴を交代。">${r.memo||''}</textarea>
     <p style="margin:12px 0 0"><button class="btn" data-save="${i}">保存</button></p>
   </div>`}).join('')}`;
 },
-pair(){
-  const d=D();
-  return `<h1>育成ペアの推奨</h1>
-  <p class="lead">${d.newbie}と${d.mentor}の組合せを、性格の相性と過去の定着実績から推奨します。</p>
-  ${d.pairs.map(p=>`<div class="card"><h3 style="margin:0 0 10px">${p.n}</h3>
-  <table><tr><th style="width:150px">${d.mentor}候補</th><th style="width:80px">相性</th><th>理由</th></tr>
-  ${p.m.map((m,i)=>`<tr><td><b>${m.name}</b>${i===0?'<br><span class="pill orange">推奨</span>':''}</td>
-  <td><span class="score ${m.s>=80?'good':m.s>=60?'mid':'bad'}">${m.s}</span></td><td>${m.r}</td></tr>`).join('')}
-  </table></div>`).join('')}
-  <p class="note">相性スコアは当社の性格分析エンジンによる指標（0〜100）です。最終的な割当は${d.mgr}が判断します。</p>`;
-},
 field(){
   const d=D();
-  return `<h1>現場入力（スマホ）</h1>
-  <p class="lead">${d.mentor}は週1回5分、${d.newbie}は隔週で2分。スマホから入力します。</p>
+  return `<h1>職員のセルフチェック（スマホ）</h1>
+  <p class="lead">全職員が週1回、2分で答えます。回答は本人と${d.mgr}だけが見て、評価や給与には使いません。</p>
   <div class="row">
     <div class="card" style="background:none;border:0;padding:0">
       <div class="phone">
-        <h3>新人の様子チェック</h3><div class="note">${d.mentor}：${mode==='care'?'佐藤 由美':'岡田 翔'} → ${d.targets[0].name}</div>
-        ${[['質問・相談の量は？',['減った','変わらない','増えた']],['表情・元気さは？',['心配','ふつう','良い']],['今週できるようになったことは？',['なし','1つ','2つ以上']],['来週、師長・管理者に見てほしい？',['はい','いいえ']]].map((q,k)=>`<div class="q">${q[0].replace('師長・管理者',d.mgr)}</div><div class="opts" data-f="a${k}">${q[1].map(o=>`<button>${o}</button>`).join('')}</div>`).join('')}
-        <div class="q">ひとこと（任意）</div><textarea placeholder="例：点滴の準備で手が止まることがある"></textarea>
+        <h3>今週のわたし</h3><div class="note">毎週金曜にお知らせが届きます</div>
+        <div class="q">体の疲れ（1＝元気　5＝とても疲れた）</div><div class="opts">${['1','2','3','4','5'].map(o=>`<button>${o}</button>`).join('')}</div>
+        <div class="q">気持ちの余裕（1＝ない　5＝ある）</div><div class="opts">${['1','2','3','4','5'].map(o=>`<button>${o}</button>`).join('')}</div>
+        <div class="q">いま困っていること</div><div class="opts" style="flex-wrap:wrap">${['なし','仕事の量','体調','人間関係','家のこと'].map(o=>`<button style="flex:0 0 30%">${o}</button>`).join('')}</div>
+        <div class="q">${d.mgr}と少し話したい？</div><div class="opts">${['はい','今はいい'].map(o=>`<button>${o}</button>`).join('')}</div>
+        <div class="q">ひとこと（任意）</div><textarea placeholder="例：最近、入浴が続いていて腰がつらい"></textarea>
         <p><button class="btn" style="width:100%" data-send>送信</button></p>
       </div>
     </div>
     <div class="card" style="background:none;border:0;padding:0">
       <div class="phone">
-        <h3>今週のふりかえり（3問）</h3><div class="note">${d.newbie}：${d.targets[0].name}／回答は${d.mgr}に個別には表示されません</div>
-        ${['この職場で、来年も働いていたいと思う','困ったとき、相談できる人がいる','仕事の量は、今の自分に合っている'].map((q,k)=>`<div class="q">${q}</div><div class="opts" data-f="b${k}">${['1','2','3','4','5'].map(o=>`<button>${o}</button>`).join('')}</div>`).join('')}
+        <h3>月1回のふりかえり（3問）</h3><div class="note">回答は${d.mgr}に個別には表示されません</div>
+        ${['この職場で、来年も働いていたいと思う','困ったとき、相談できる人がいる','仕事の量は、今の自分に合っている'].map(q=>`<div class="q">${q}</div><div class="opts">${['1','2','3','4','5'].map(o=>`<button>${o}</button>`).join('')}</div>`).join('')}
         <div class="note" style="margin-top:6px">1＝そう思わない　5＝そう思う</div>
         <p><button class="btn" style="width:100%" data-send>送信</button></p>
       </div>
@@ -333,7 +347,7 @@ field(){
 guest(){
   const d=D();
   return `<h1>接し方カード</h1>
-  <p class="lead">利用者さまごとに、入浴・送迎・レクでの声かけで気をつけることをまとめたカードです。新人職員に配布します。性格の推定は、ケアマネジャーのケアプラン（第2表）、ご家族・職員が答える10問（TIPI-J）、通所介護記録・連絡帳からの国産基盤モデルによる推定の3本で行います。ケアプランがあるため、利用開始の初日から初期版のカードを出せます。</p>
+  <p class="lead">利用者さまごとに、入浴・送迎・レクでの声かけで気をつけることをまとめたカードです。職員全員が見られます。性格の推定は、ケアマネジャーのケアプラン（第2表）、ご家族・職員が答える10問（TIPI-J）、通所介護記録・連絡帳からの国産基盤モデルによる推定の3本で行います。ケアプランがあるため、利用開始の初日から初期版のカードを出せます。</p>
   <div class="cardgrid">${d.guests.map(g=>`<div class="card guest"><h3>${g.name}</h3>
   <div style="margin-top:4px"><span class="pill cyan">${g.tipi}</span></div><div class="note">推定の出どころ：${g.src}</div>
   <div class="quote">${g.plan}</div>
@@ -344,7 +358,22 @@ verify(){
   return `<h1>効果検証（8週間）</h1>
   <p class="lead">介入する6事業所（AIの提示あり）と、比べる4事業所（性格分析のみ）の比較。11月30日提出の提案書・デモ動画にそのまま使います。</p>
   <div class="kpi">${KPI.map(k=>`<div class="card"><div class="l">${k.l}</div><div class="v">${k.a}</div><div class="c">比べる4事業所 ${k.b}　<b style="color:var(--green)">${k.c}</b></div></div>`).join('')}</div>
-  <div class="row">${['prep','quit','hit'].map(k=>`<div class="card"><b>${VERIFY[k].t}</b>${chart(VERIFY[k])}</div>`).join('')}</div>
+  <div class="row">${['load','quit','hit'].map(k=>`<div class="card"><b>${VERIFY[k].t}</b>${chart(VERIFY[k])}</div>`).join('')}</div>
+  <div class="card"><b>本人の「大丈夫」と観察のズレ</b>
+  <table style="margin-top:8px"><tr><th>ズレを検知した件数</th><th>そのうち声かけで困りごとが見つかった</th><th>見つかった困りごとの内訳</th></tr>
+  <tr><td class="score">14件</td><td class="score good">10件（71%）</td><td>体の負担 5件／人間関係 3件／家のこと 2件</td></tr></table></div>
+  <div class="row">
+    <div class="card"><b>利用者対応の変化（記録から国産基盤モデルが抽出）</b>
+    <table style="margin-top:8px"><tr><th>項目</th><th>導入前（週）</th><th>導入後（週）</th></tr>
+    <tr><td>入浴・レクの拒否</td><td>9件</td><td class="score good">5件</td></tr>
+    <tr><td>興奮・不穏</td><td>6件</td><td class="score good">4件</td></tr>
+    <tr><td>転倒・ヒヤリ</td><td>2件</td><td>2件</td></tr></table>
+    <p class="note">接し方カードの導入前後で、記録に出てくる件数を比べます。</p></div>
+    <div class="card"><b>手書き記録の読解（国産基盤モデル）</b>
+    <table style="margin-top:8px"><tr><th>スキャン枚数（週）</th><th>読めた率</th><th>読めなかった主な理由</th></tr>
+    <tr><td class="score">約120枚</td><td class="score good">91%</td><td>崩し字 5%／薄い鉛筆 3%／略語 1%</td></tr></table>
+    <p class="note">読めなかった類型は、国産モデルの開発元へのフィードバックにします。</p></div>
+  </div>
   <div class="card"><b>後ろ向き検証（過去3年の離職者 41名）</b>
   <table style="margin-top:8px"><tr><th>検知率（再現率）</th><th>誤検知率</th><th>兆候が出たのは離職の</th></tr>
   <tr><td class="score good">68%</td><td class="score mid">21%</td><td class="score">平均 11週間前</td></tr></table>
